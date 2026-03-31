@@ -72,7 +72,7 @@ export const Portfolio = ({ visitCount = 1 }: { visitCount?: number }) => {
     "Portfolio Architecture:",
     "  • UI: React, Ink, TypeScript",
     "  • Server: Node.js & ssh2",
-    "   • Infra: Docker & Fly.io",
+    "  • Infra: Docker & Fly.io",
   ];
   const rowCount = Math.max(pfpLines.length, bioLines.length);
 
