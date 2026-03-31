@@ -1,4 +1,4 @@
-# my-website
+# my-portfolio
 
 run this in your local terminal: ssh nathan-nguyen.fly.dev
 
