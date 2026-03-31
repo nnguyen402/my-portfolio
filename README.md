@@ -1,5 +1,5 @@
 # my-website
 
-run this in your local terminal: ssh 2a09:8280:1::ed:eea5:0
+run this in your local terminal: ssh nathan-nguyen.fly.dev
 
 ![Nathan's SSH Portfolio Terminal UI](./demoimg.png)
