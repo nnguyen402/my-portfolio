@@ -87,11 +87,11 @@ export const Skills = ({ onBack }: SkillsProps) => {
   });
 
   return (
-    <Box flexDirection="column" padding={3}>
+    <Box flexDirection="column" padding={1}>
       <Text color="#47D69D" bold>
         Skills
       </Text>
-      <Box flexDirection="row" flexWrap="wrap" width="100%">
+      <Box flexDirection="row" flexWrap="wrap" width="70%">
         {skills.map((group, i) => (
           <Box key={i} flexDirection="column" width="50%" marginBottom={1}>
             <Text color="#FF8DA1" bold>
