@@ -1,0 +1,27 @@
+app = 'nathanns-portfolio'
+primary_region = "iad"
+
+[env]
+  PORT = "2222"
+  DATA_PATH = "/data"
+  FORCE_COLOR = "3"
+  TERM = "xterm-256color"
+  COLORTERM = "truecolor"
+
+[[vm]]
+  memory_mb = 256
+  cpu_kind = "shared"
+  cpus = 1
+
+[[mounts]]
+  source = "portfolio_data"
+  destination = "/data"
+
+[[services]]
+  internal_port = 2222
+  protocol = "tcp"
+
+  [[services.ports]]
+    port = 22
+    handlers = []
+

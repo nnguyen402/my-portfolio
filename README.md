@@ -1,3 +1,3 @@
 # my-website
 
-run by: npx tsx src/server.ts
+run this in your local terminal: ssh 2a09:8280:1::ed:eea5:0

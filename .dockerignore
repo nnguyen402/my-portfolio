@@ -1,0 +1,15 @@
+# flyctl launch added from .gitignore
+# Dependencies
+**/node_modules
+
+# Build output
+**/dist
+**/build
+
+# Environment variables & Secrets
+**/.env
+**/*.key
+**/*.pub
+**/host.key
+**/host.key.pub
+fly.toml

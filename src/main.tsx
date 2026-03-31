@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import { Box, Text, useInput } from "ink";
 import { readFileSync } from "node:fs";
 import { Projects } from "./projects";
+import { Contact } from "./contact";
+import { Skills } from "./skills";
 
 const Pfp = readFileSync("./src/pfp.txt", "utf-8");
-export const Portfolio = () => {
+export const Portfolio = ({ visitCount = 1 }: { visitCount?: number }) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [currentView, setCurrentView] = useState<
     "home" | "projects" | "skills" | "contact"
@@ -31,12 +33,16 @@ export const Portfolio = () => {
 
   if (currentView === "projects")
     return <Projects onBack={() => setCurrentView("home")} />;
+  if (currentView === "skills")
+    return <Skills onBack={() => setCurrentView("home")} />;
+  if (currentView === "contact")
+    return <Contact onBack={() => setCurrentView("home")} />;
   const pfpLines = Pfp.split("\n");
   const pfpWidth = Math.max(...pfpLines.map((l) => l.length));
 
   const spotifyUrl =
     "https://open.spotify.com/user/g7da8ica1rxvv4xxk6n47c2eu?si=49673440fda8475f";
-  const spotifyClick = `\x1b]8;;${spotifyUrl}\x07  • Music (ctrl+click me!)\x1b]8;;\x07`;
+  const spotifyClick = `\x1b]8;;${spotifyUrl}\x07Music\x1b]8;;\x07`;
   const bioLines = [
     "",
     "Nathan Nguyen",
@@ -61,8 +67,8 @@ export const Portfolio = () => {
     "Hobbies:",
     "  • Climbing",
     "  • Sewing",
-    "  • Gaming  (Fallout, Counter-Strike, Minecraft)",
-    spotifyClick,
+    "  • Gaming (Fallout series, Counter-Strike, Minecraft, and more)",
+    "  • " + spotifyClick + " (ctrl+click me!)",
     "  • Fashion",
   ];
   const rowCount = Math.max(pfpLines.length, bioLines.length);
@@ -74,12 +80,21 @@ export const Portfolio = () => {
         const bioLine = bioLines[i] ?? "";
         const isTitle = i === 1;
         const isSubtitle = i === 2;
+        const isHobby = i >= 21;
 
         return (
           <Box key={i} flexDirection="row">
             <Text color="#FF8DA1">{pfpLine.padEnd(pfpWidth)}</Text>
             <Text
-              color={isTitle ? "#47D69D" : isSubtitle ? "#47D69D" : "#38AB7D"}
+              color={
+                isTitle
+                  ? "#47D69D"
+                  : isSubtitle
+                    ? "#47D69D"
+                    : isHobby
+                      ? "#CF8DA1"
+                      : "#38AB7D"
+              }
               bold={isTitle}
             >
               {"  " + bioLine}
@@ -87,12 +102,14 @@ export const Portfolio = () => {
           </Box>
         );
       })}
-
+      <Box paddingLeft={5}>
+        <Text color="gray">Lifetime Visitor Count: {visitCount}</Text>
+      </Box>
       <Box
         marginTop={2}
         gap={3}
         justifyContent="space-evenly"
-        paddingRight={50}
+        paddingRight={40}
       >
         {links.map((link, i) => (
           <Box key={i}>
