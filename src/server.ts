@@ -157,11 +157,20 @@ wss.on("connection", (ws) => {
 
   (wsStream as any).isTTY = true;
   (wsStream as any).setRawMode = () => wsStream;
-  (wsStream as any).columns = 80;
-  (wsStream as any).rows = 24;
-
   (wsStream as any).ref = () => wsStream;
   (wsStream as any).unref = () => wsStream;
+  ws.on("message", (data) => {
+  try {
+    const msg = JSON.parse(data.toString());
+    if (msg.type === 'resize') {
+      (wsStream as any).columns = msg.cols;
+      (wsStream as any).rows = msg.rows;
+      wsStream.emit("resize");
+      return;
+    }
+  } catch (e) {
+    wsStream.push(data);
+  }
 
   const { unmount } = render(
     React.createElement(Portfolio, { visitCount: lifetimeConCount }),
