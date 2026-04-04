@@ -146,38 +146,35 @@ wss.on("connection", (ws) => {
     },
   });
 
-  ws.on("message", (data) => {
-    wsStream.push(data);
-  });
-
-  ws.on("close", () => {
-    activeConnections--;
-    unmount();
-  });
-
   (wsStream as any).isTTY = true;
   (wsStream as any).setRawMode = () => wsStream;
   (wsStream as any).ref = () => wsStream;
   (wsStream as any).unref = () => wsStream;
+
   ws.on("message", (data) => {
-  try {
-    const msg = JSON.parse(data.toString());
-    if (msg.type === 'resize') {
-      (wsStream as any).columns = msg.cols;
-      (wsStream as any).rows = msg.rows;
-      wsStream.emit("resize");
-      return;
-    }
-  } catch (e) {
+    try {
+      const str = data.toString();
+      if (str.startsWith("{")) {
+        const msg = JSON.parse(str);
+        if (msg.type === "resize") {
+          (wsStream as any).columns = msg.cols;
+          (wsStream as any).rows = msg.rows;
+          wsStream.emit("resize");
+          return;
+        }
+      }
+    } catch (e) {}
+
     wsStream.push(data);
-  }
+  });
 
   const { unmount } = render(
     React.createElement(Portfolio, { visitCount: lifetimeConCount }),
     { stdout: wsStream as any, stdin: wsStream as any, patchConsole: false },
   );
-});
 
-httpServer.listen(8080, "::", () =>
-  console.log("WebSocket running on port 8080"),
-);
+  ws.on("close", () => {
+    activeConnections--;
+    unmount();
+  });
+});
