@@ -5,7 +5,9 @@ import { render } from "ink";
 import React from "react";
 import dotenv from "dotenv";
 import { Portfolio } from "./main.tsx";
-import { Writable } from "node:stream";
+import { Writable, Duplex } from "node:stream";
+import http from "http";
+import { WebSocketServer } from "ws";
 process.on("uncaughtException", (err) => console.error("Uncaught:", err));
 process.on("unhandledRejection", (err) =>
   console.error("Unhandled rejection:", err),
@@ -113,3 +115,57 @@ server.on("error", (err: Error) => console.error("Server error:", err));
 server.listen(2222, "::", () => {
   console.log("SSH running on port 2222");
 });
+
+const httpServer = http.createServer((req, res) => {
+  res.writeHead(200);
+  res.end("Portfolio backend is running");
+});
+
+const wss = new WebSocketServer({ server: httpServer, path: "/term" });
+
+wss.on("connection", (ws) => {
+  if (activeConnections >= MAX_CONNECTIONS) {
+    ws.close();
+    return;
+  }
+
+  activeConnections++;
+  lifetimeConCount++;
+
+  writeFile(statsFile, lifetimeConCount.toString(), (err) => {
+    if (err) console.error("Failed to save visit count:", err);
+  });
+
+  const wsStream = new Duplex({
+    read() {},
+    write(chunk, encoding, callback) {
+      if (ws.readyState === ws.OPEN) {
+        ws.send(chunk.toString().replace(/\n/g, "\r\n"));
+      }
+      callback();
+    },
+  });
+
+  ws.on("message", (data) => {
+    wsStream.push(data);
+  });
+
+  ws.on("close", () => {
+    activeConnections--;
+    unmount();
+  });
+
+  (wsStream as any).isTTY = true;
+  (wsStream as any).setRawMode = () => wsStream;
+  (wsStream as any).columns = 80;
+  (wsStream as any).rows = 24;
+
+  const { unmount } = render(
+    React.createElement(Portfolio, { visitCount: lifetimeConCount }),
+    { stdout: wsStream as any, stdin: wsStream as any, patchConsole: false },
+  );
+});
+
+httpServer.listen(8080, "::", () =>
+  console.log("WebSocket running on port 8080"),
+);

@@ -64,6 +64,7 @@ export const Portfolio = ({ visitCount = 1 }: { visitCount?: number }) => {
     "",
     "Hobbies:",
     "  • Climbing",
+    "  • Photography",
     "  • Sewing",
     "  • Gaming (Fallout, Counter-Strike, Minecraft, and more)",
     "  • " + spotifyClick + " (ctrl+click me!)",
